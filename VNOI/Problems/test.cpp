@@ -5,7 +5,7 @@
 #define         int         long long
 #define         endl        '\n'
 #define         task        "CAU1"
-#define			file		ios_base::sync_with_stdio(false); cin.tie(NULL); if (fopen(task".INP", "r")) { freopen(task".INP", "r", stdin); freopen(task".OUT", "w", stdout); }
+#define		file		ios_base::sync_with_stdio(false); cin.tie(NULL); if (fopen(task".INP", "r")) { freopen(task".INP", "r", stdin); freopen(task".OUT", "w", stdout); }
 #define         Groot       signed main() 
 const           int         oo = LLONG_MAX;
 const           int         MAXN = 1e6 + 7;
@@ -20,7 +20,7 @@ inline          int         prod													(int x, int y, int mod = MOD) { ret
 inline          int         sum														(int x, int y, int mod = MOD) { return add(x, y, mod), x; }
 inline          int         bpow													(int x, int y, int mod = MOD) { int ans = 1; while (y) { if (y & 1) mul(ans, x, mod); mul(x, x, mod); y >>= 1; } return ans; }
 inline          int         Inv														(int x, int mod = MOD) { return bpow(x, mod - 2, mod); }
-inline			int			eulerPhi												(int N) { int result = N; for (int p = 2; p * p <= N; ++p) while (N % p == 0) { result -= result / p; while (N % p == 0) N /= p; } if (N > 1) result -= result / N; return result; }
+inline		int			eulerPhi												(int N) { int result = N; for (int p = 2; p * p <= N; ++p) while (N % p == 0) { result -= result / p; while (N % p == 0) N /= p; } if (N > 1) result -= result / N; return result; }
 
 inline          int         gcd														(int a, int b) { while (b != 0) { int temp = b; b = a % b; a = temp; } return a; }
 inline          int         lcm														(int a, int b) { return a / gcd(a, b) * b; }
@@ -40,32 +40,18 @@ inline          string      minusBigNum												(string num1, string num2) { 
 // cout << fixed << setprecision(n) << number << endl;
 
 
-signed main() {
-    int n; cin >> n;
-    vector<int> a(n);
-    deque<int> mydq;
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
-    }
 
-    for (int i = 0; i < n; i++) {
-        if (mydq.empty()) {
-            mydq.push_back(a[i]);
-        }
-        else if (a[i] >= mydq.back()) {
-            mydq.push_back(a[i]);
-        }
-        else {
-            mydq.push_front(a[i]);
-        }
+signed main() {
+    int t; cin >> t;
+    while (t--) {
+        int n; cin >> n;
+        vector<int> a(n);
+        for (int i = 0; i < n; i++) cin >> a[i];
+        int g = 0;
+        for (auto i : a) g ^= i;
+
+        if (g == 0) cout << "Doraemon\n";
+        else cout << "Nobita\n";
     }
-    multiset<int>myset;
-    for (auto i : mydq) {
-        if (myset.lower_bound(i) != myset.end()) {
-            myset.erase(myset.lower_bound(i));
-        }
-        myset.insert(i);
-    }
-    cout << myset.size();
     return 0;
 }
