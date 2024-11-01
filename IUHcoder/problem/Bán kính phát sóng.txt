@@ -1,0 +1,66 @@
+#include <bits/stdc++.h>
+#include <unordered_map>
+#ifndef ONLINE_JUDGE
+#include "debug.h"
+#endif 
+
+#define int long long
+#define yes cout << "yes\n"
+#define no cout << "no\n"
+#define endl '\n'
+#define all(a) a.begin(), a.end()
+using namespace std;
+const int oo = 1e9 + 7;
+const int MOD = 1e9 + 7;
+const int MAX = 1000000;
+typedef long long ll;
+typedef pair<double, int> pii;
+
+signed main() {
+    int n;
+    cin >> n;
+    vector<pair<ll, ll>> points(n);
+    for (int i = 0; i < n; i++) cin >> points[i].first >> points[i].second;
+
+    if (n == 1) {
+        cout << fixed << setprecision(6) << "0.000000\n";
+        return 0;
+    }
+
+    vector<bool> in_mst(n, false);
+    vector<double> min_dist(n, 1e18);
+    min_dist[0] = 0.0;
+    double max_edge = 0.0;
+
+    for (int i = 0; i < n; i++) {
+        double curr_min = 1e18;
+        int u = -1;
+        for (int j = 0; j < n; j++) {
+            if (!in_mst[j] && min_dist[j] < curr_min) {
+                curr_min = min_dist[j];
+                u = j;
+            }
+        }
+
+        if (u == -1) break;
+        in_mst[u] = true;
+        if (min_dist[u] > max_edge) {
+            max_edge = min_dist[u];
+        }
+
+        for (int v = 0; v < n; v++) {
+            if (!in_mst[v]) {
+                double dx = (double)(points[u].first - points[v].first);
+                double dy = (double)(points[u].second - points[v].second);
+                double dist = sqrt(dx * dx + dy * dy);
+                if (dist < min_dist[v]) {
+                    min_dist[v] = dist;
+                }
+            }
+        }
+    }
+
+    double r = max_edge / 2.0;
+    cout << fixed << setprecision(7) << r;
+    return 0;
+}

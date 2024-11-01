@@ -1,0 +1,117 @@
+#include <bits/stdc++.h>
+#include <unordered_map>
+#ifndef ONLINE_JUDGE
+#include "debug.h"
+#endif 
+
+#define int long long
+#define yes cout << "yes\n"
+#define no cout << "no\n"
+#define endl '\n';
+#define all(a) a.begin(), a.end()
+using namespace std;
+const int oo = 1e9 + 7;
+const int MOD = 1e9 + 7;
+
+
+struct Event {
+    int pos;
+    int type; 
+    int value;
+    int idx; 
+};
+
+struct Segment {
+    int id;
+    int L, R, K;
+};
+
+int N;
+vector<Segment> segments;
+vector<int> coords;
+map<int, int> coord_comp; 
+struct BIT {
+    int size;
+    vector<int> tree;
+
+    BIT(int n) : size(n) {
+        tree.assign(n + 2, 0);
+    }
+
+    void update(int idx, int val) {
+        for (; idx <= size; idx += idx & -idx)
+            tree[idx] += val;
+    }
+
+    int query(int idx) {
+        int res = 0;
+        for (; idx > 0; idx -= idx & -idx)
+            res += tree[idx];
+        return res;
+    }
+
+    int query_range(int l, int r) {
+        if (l > r) return 0;
+        return query(r) - query(l - 1);
+    }
+};
+signed main() {
+
+    cin >> N;
+    segments.resize(N);
+    coords.reserve(2 * N);
+    for (int i = 0; i < N; ++i) {
+        segments[i].id = i;
+        cin >> segments[i].L >> segments[i].R >> segments[i].K;
+        segments[i].K = min(segments[i].K, segments[i].R - segments[i].L);
+
+        coords.push_back(segments[i].R);
+        coords.push_back(segments[i].L + segments[i].K);
+    }
+
+    sort(coords.begin(), coords.end());
+    coords.erase(unique(coords.begin(), coords.end()), coords.end());
+
+    int idx = 1;
+    for (int coord : coords) {
+        coord_comp[coord] = idx++;
+    }
+
+    vector<Event> events;
+    for (int i = 0; i < N; ++i) {
+        int compressed_R = coord_comp[segments[i].R];
+        int compressed_L_plus_K = coord_comp[segments[i].L + segments[i].K];
+
+        events.push_back({ segments[i].L, 0, compressed_R, -1 });
+
+        events.push_back({ segments[i].R - segments[i].K, 1, compressed_L_plus_K, i });
+    }
+
+    sort(events.begin(), events.end(), [](const Event& a, const Event& b) {
+        if (a.pos != b.pos)
+            return a.pos < b.pos;
+        else
+            return a.type < b.type;
+        });
+
+    BIT bit(idx + 5);
+    vector<int> ans(N, 0);
+
+    for (const auto& e : events) {
+        if (e.type == 0) {
+            bit.update(e.value, 1);
+        }
+        else {
+            int total = bit.query_range(e.value, idx + 2);
+            total--;
+            ans[e.idx] = total;
+        }
+    }
+
+    for (int i = 0; i < N; ++i) {
+        cout << ans[i] << endl;
+    }
+
+
+    return 0;
+}

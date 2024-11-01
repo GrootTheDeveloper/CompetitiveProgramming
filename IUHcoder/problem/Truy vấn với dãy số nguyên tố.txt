@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+#include <unordered_map>
+#ifndef ONLINE_JUDGE
+#include "debug.h"
+#endif 
+
+#define int long long
+#define yes cout << "yes\n"
+#define no cout << "no\n"
+#define endl '\n'
+#define all(a) a.begin(), a.end()
+using namespace std;
+const int oo = 1e9 + 7;
+const int MOD = 1e9 + 7;
+const int MAX = 1000000;
+
+vector<int> primes;
+vector<int> P; 
+vector<int> S; 
+void sieve() {
+    vector<bool> isPrime(MAX + 1, true);
+    isPrime[0] = isPrime[1] = false;
+    for (int i = 2; i*i <= MAX; ++i) {
+        if (isPrime[i]) {
+            for (int j = i * i; j <= MAX; j += i) {
+                isPrime[j] = false;
+            }
+        }
+    }
+    for (int i = 2; i <= MAX; i++) {
+        if (isPrime[i]) primes.push_back(i);
+    }
+}
+
+
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    sieve();
+    int m = primes.size();
+    P.assign(m + 1, 0); 
+    S.assign(m + 1, 0); 
+    for (int i = 1; i <= m; ++i) {
+        P[i] = (P[i - 1] + primes[i - 1]) % MOD;
+        S[i] = (S[i - 1] + (i * primes[i - 1])) % MOD;
+    }
+
+    int T;
+    cin >> T;
+
+
+    while (T--) {
+        int L, r;
+        cin >> L >> r;
+
+        int a = lower_bound(primes.begin(), primes.end(), L) - primes.begin() + 1;
+        int b = upper_bound(primes.begin(), primes.end(), r) - primes.begin(); 
+
+        if (a > b) {
+            cout << 0 << endl;
+        }
+        else {
+            int sum = (S[b] - S[a - 1] - ((a - 1) * (P[b] - P[a - 1]))) % MOD;
+            if (sum < 0) sum += MOD; 
+            cout << sum << endl;
+        }
+    }
+
+    return 0;
+}
